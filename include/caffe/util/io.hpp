@@ -127,7 +127,7 @@ inline bool ReadImageToDatum(const string& filename, const int label,
 }
 
 //add self function author:jinwei
-bool ReadDenseDataToDatum(const string& filename,const string& feature, const int height, const int width, 
+bool ReadDenseDataToDatum(const string& filename,const string& feature, const int feature_dims, const int height, const int width, 
     const bool is_color, const std::string & encoding, Datum* datum);
 
 

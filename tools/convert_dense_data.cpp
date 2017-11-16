@@ -78,16 +78,17 @@ int main(int argc, char** argv) {
   gflags::SetUsageMessage("Convert a set of images to the leveldb/lmdb\n"
         "format used as input for Caffe.\n"
         "Usage:\n"
-        "    convert_imageset [FLAGS] ROOTFOLDER/ LISTFILE DB_NAME\n"
-        "The ImageNet dataset for the training demo is at\n"
-        "    http://www.image-net.org/download-images\n");
+        "    ./build/tools/convert_dense_data.bin --label_file=/path/to/feature_file  images/root    save/lmdb/to  feature_dims\n");
   gflags::ParseCommandLineFlags(&argc, &argv, true);
 
-  if (argc < 3) {
-    gflags::ShowUsageWithFlagsRestrict(argv[0], "tools/convert_imageset");
+  if (argc < 4) {
+    gflags::ShowUsageWithFlagsRestrict(argv[0], "need 4 params");
     return 1;
   }
 
+  //dims of featuremap
+  int feature_dims = atoi(argv[3]);
+  
   const bool is_color = !FLAGS_gray;
   const bool check_size = FLAGS_check_size;
   const bool encoded = FLAGS_encoded;
@@ -145,7 +146,7 @@ int main(int argc, char** argv) {
     }
 
     status = ReadDenseDataToDatum(root_folder + lines[line_id].first,
-                                  lines[line_id].second, resize_height, resize_width, is_color, enc, &datum);
+                                  lines[line_id].second,feature_dims, resize_height, resize_width, is_color, enc, &datum);
     
 
     //status = ReadBoxDataToDatum(root_folder + lines[line_id].first,

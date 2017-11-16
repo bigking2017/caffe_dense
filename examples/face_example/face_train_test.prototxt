@@ -1107,7 +1107,7 @@ layer {
     }
   }
 }
-############## softmax loss ###############
+
 layer {
   name: "fc6"
   type: "InnerProduct"
@@ -1132,29 +1132,25 @@ layer {
     }
   }
 }
-#layer {
-#  name: "dense_loss"
-#  type: "DenseLoss"
-#  bottom: "fc6"
-#  bottom: "label"
-#  top: "dense_loss"
-#}
-############## center loss ###############
+
+############## dense loss ###############
 layer {
-  name: "center_loss"
-  type: "CenterLoss"
+  name: "dense_loss"
+  type: "DenseLoss"
   bottom: "fc6"
   bottom: "label"
-  top: "center_loss"
+  top: "dense_loss"
   param {
     lr_mult: 1
     decay_mult: 2 
   }
-  center_loss_param {
-    num_output: 10572
-    center_filler {
-      type: "xavier"
-    }
+  dense_loss_param {
+    dense_dims: 128
+    dense_weight: 0.01
+    #dense_filler {
+    #  type: "xavier"
+    #}
   }
   loss_weight: 0.008
 }
+

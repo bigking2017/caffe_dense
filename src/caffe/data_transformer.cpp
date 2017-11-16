@@ -138,7 +138,7 @@ void DataTransformer<Dtype>::Transform(const Datum& datum,
       "dense dims must has" << dense_dims <<  "dims";
   Dtype* transformed_data = transformed_blob->mutable_cpu_data();
   for(i=0;i < dense_dims ; i++){
-    transformed_data[i] = datum.float_data(i)*0.01;
+    transformed_data[i] = datum.float_data(i);
     }
 }
 

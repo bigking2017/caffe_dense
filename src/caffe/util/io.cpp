@@ -143,7 +143,7 @@ bool ReadImageToDatum(const string& filename, const int label,
 
 
 
-bool ReadDenseDataToDatum(const string& filename,const string& feature, const int height, const int width, 
+bool ReadDenseDataToDatum(const string& filename,const string& feature, const int feature_dims, const int height, const int width, 
     const bool is_color, const std::string & encoding, Datum* datum) {
   int ori_w, ori_h;
   cv::Mat cv_img = ReadImageToCVMat(filename, height, width, is_color);
@@ -162,7 +162,7 @@ bool ReadDenseDataToDatum(const string& filename,const string& feature, const in
       char *p;
       int ft_count = 0;
       p = strtok((char *)feature.c_str()," ");
-      while(p&&ft_count<128){
+      while(p&&ft_count<feature_dims){
         if(ft_count == 0)
         {
           datum->add_float_data(atof(p));
@@ -176,7 +176,7 @@ bool ReadDenseDataToDatum(const string& filename,const string& feature, const in
           ft_count ++;
         }
       }
-      CHECK_GE(ft_count, 128) << "feature must has 128 dimesions";
+      CHECK_GE(ft_count, feature_dims) << "feature must has "<< feature_dims <<"dimesions";
     
       // read xml anno data
       //ParseXmlToDatum(annoname, label_map, ori_w, ori_h, datum);

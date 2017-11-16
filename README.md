@@ -1,4 +1,35 @@
 # Caffe
+# Jin wei modified 
+# add function dense_feature fit
+1. convert data to lmdb
+    ./build/tools/convert_dense_data.bin --label_file=/path/to/feature_file  images/root    save/lmdb/to  feature_dims
+    ./build/tools/convert_dense_data.bin --label_file=/home/kingk/face_sample/face_01/feature.txt /home/kingk/face_sample/face_01/ /home/kingk/face_work/caffe-centerloss/data/face_fit/lmdb 128
+
+2. set prototxt dense_loss_layer
+   ############## dense loss ###############
+layer {
+  name: "dense_loss"
+  type: "DenseLoss"
+  bottom: "fc6"
+  bottom: "label"
+  top: "dense_loss"
+  param {
+    lr_mult: 1
+    decay_mult: 2 
+  }
+  dense_loss_param {
+    dense_dims: 128
+    dense_weight: 0.01
+    #dense_filler {
+    #  type: "xavier"
+    #}
+  }
+  loss_weight: 0.008
+}
+
+3. train 
+    ./build/tools/caffe train  --solver=/path/to/solver
+
 
 [![Build Status](https://travis-ci.org/BVLC/caffe.svg?branch=master)](https://travis-ci.org/BVLC/caffe)
 [![License](https://img.shields.io/badge/license-BSD-blue.svg)](LICENSE)
@@ -43,3 +74,13 @@ Please cite Caffe in your publications if it helps your research:
       Title = {Caffe: Convolutional Architecture for Fast Feature Embedding},
       Year = {2014}
     }
+
+
+
+
+
+
+
+
+
+

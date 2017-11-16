@@ -18,7 +18,7 @@ class DenseDataLayer : public BasePrefetchingDataLayer<Dtype> {
  public:
   explicit DenseDataLayer(const LayerParameter& param);
   virtual ~DenseDataLayer();
-  virtual void DenseDataLayerSetUp(const vector<Blob<Dtype>*>& bottom,
+  virtual void DataLayerSetUp(const vector<Blob<Dtype>*>& bottom,
       const vector<Blob<Dtype>*>& top);
   virtual inline const char* type() const { return "DenseData"; }
   virtual inline int ExactNumBottomBlobs() const { return 0; }
@@ -38,4 +38,14 @@ class DenseDataLayer : public BasePrefetchingDataLayer<Dtype> {
 }  // namespace caffe
 
 #endif  // CAFFE_DATA_LAYER_HPP_
+
+
+
+
+
+
+
+
+
+
 
