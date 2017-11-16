@@ -1,0 +1,20 @@
+net: "/home/kingk/caffe_work/caffe/examples/face_example/face_train_test.prototxt"
+#test_iter: 100 
+#test_interval: 2000
+
+base_lr: 0.001
+lr_policy: "multistep"
+gamma: 0.5
+
+stepvalue: 1600
+stepvalue: 2400
+stepvalue: 2800
+max_iter: 28000
+
+display: 100
+momentum: 0.9
+weight_decay: 0.0005
+snapshot: 1000
+snapshot_prefix: "/home/kingk/caffe_work/caffe/examples/face_example/face_snapshot/face_train_test"
+
+solver_mode: GPU
