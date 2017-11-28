@@ -8,9 +8,9 @@ namespace caffe {
 
 template <typename Dtype>
 __global__ void Compute_distance_data_gpu(int nthreads, const int K, const Dtype* bottom,
-                                          const Dtype* label,  Dtype* distance, const float dense_weight) {
+                                          const Dtype* label,  Dtype* distance) {
   CUDA_KERNEL_LOOP(index, nthreads) {
-    distance[index] = bottom[index] - label[index] * dense_weight;
+    distance[index] = bottom[index] - label[index];
   }
 }
 
@@ -40,11 +40,11 @@ template <typename Dtype>
 void DenseLossLayer<Dtype>::Forward_gpu(const vector<Blob<Dtype>*>& bottom,
     const vector<Blob<Dtype>*>& top) {
   int nthreads = M_ * K_;
-  const float dense_weight = this->layer_param_.dense_loss_param().dense_weight();
+
   
   Compute_distance_data_gpu<Dtype><<<CAFFE_GET_BLOCKS(nthreads),
       CAFFE_CUDA_NUM_THREADS>>>(nthreads, K_, bottom[0]->gpu_data(), bottom[1]->gpu_data(),
-                                distance_.mutable_gpu_data(),dense_weight);
+                                distance_.mutable_gpu_data());
   Dtype dot;
   caffe_gpu_dot(M_ * K_, distance_.gpu_data(), distance_.gpu_data(), &dot);
   Dtype loss = dot / M_ / Dtype(2);

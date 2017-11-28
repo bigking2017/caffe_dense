@@ -15,11 +15,34 @@ layer {
   #  mirror: true
   }
   data_param {
-    source: "/home/kingk/caffe_work/caffe/examples/face_example/lmdb"
-    batch_size: 16
+    source: "/home/kingk/caffe_work/caffe_train25000/examples/face_example/lmdb_train"
+    batch_size: 128
     backend: LMDB
   }
 }
+
+layer {
+  name: "data"
+  type: "DenseData"
+  top: "data"
+  top: "label"
+  include { 
+    phase: TEST
+  }
+  transform_param {
+    mean_value: 127
+    mean_value: 127
+    mean_value: 127
+    scale: 0.0078125
+  #  mirror: true
+  }
+  data_param {
+    source: "/home/kingk/caffe_work/caffe_train25000/examples/face_example/lmdb"
+    batch_size: 64
+    backend: LMDB
+  }
+}
+
 layer {
   name: "conv1a"
   type: "Convolution"

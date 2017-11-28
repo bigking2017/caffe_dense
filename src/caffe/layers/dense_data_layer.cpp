@@ -69,6 +69,8 @@ bool DenseDataLayer<Dtype>::Skip() {
   return !keep;
 }
 
+
+
 template<typename Dtype>
 void DenseDataLayer<Dtype>::Next() {
   cursor_->Next();
@@ -79,6 +81,7 @@ void DenseDataLayer<Dtype>::Next() {
   }
   offset_++;
 }
+
 
 // This function is called on prefetch thread
 template<typename Dtype>

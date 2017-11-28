@@ -93,3 +93,9 @@ STUB_GPU(SoftmaxLayer);
 INSTANTIATE_CLASS(SoftmaxLayer);
 
 }  // namespace caffe
+
+
+
+
+
+

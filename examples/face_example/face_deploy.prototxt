@@ -1,8 +1,11 @@
-input: "data"
-input_dim: 1
-input_dim: 3
-input_dim: 112
-input_dim: 96
+name:"facefit_deploy"
+layer{
+  name: "data"
+  type: "Input"
+  top: "data"
+  input_param { shape {dim: 1 dim: 3 dim: 160 dim: 160}}
+}
+
 layer {
   name: "conv1a"
   type: "Convolution"
@@ -1081,6 +1084,31 @@ layer {
   }
   inner_product_param {
     num_output: 512
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+
+layer {
+  name: "fc6"
+  type: "InnerProduct"
+  bottom: "fc5"
+  top: "fc6"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  inner_product_param {
+    num_output: 128
     weight_filler {
       type: "xavier"
     }

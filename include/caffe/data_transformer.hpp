@@ -38,6 +38,9 @@ class DataTransformer {
   void Transform(const Datum& datum, Blob<Dtype>* transformed_blob);
 
   void Transform(const Datum& datum, Blob<Dtype>* transformed_blob, int dense_dims);
+
+  void Transform(const string& feature_str,Blob<Dtype>* transformed_blob,int dense_dims,float dense_scale);
+  
   /**
    * @brief Applies the transformation defined in the data layer's
    * transform_param block to a vector of Datum.

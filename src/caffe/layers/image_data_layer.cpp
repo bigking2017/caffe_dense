@@ -29,7 +29,8 @@ void ImageDataLayer<Dtype>::DataLayerSetUp(const vector<Blob<Dtype>*>& bottom,
   const int new_width  = this->layer_param_.image_data_param().new_width();
   const bool is_color  = this->layer_param_.image_data_param().is_color();
   string root_folder = this->layer_param_.image_data_param().root_folder();
-
+  const int dense_dims = this->layer_param_.image_data_param().dense_dims();
+  
   CHECK((new_height == 0 && new_width == 0) ||
       (new_height > 0 && new_width > 0)) << "Current implementation requires "
       "new_height and new_width to be set at the same time.";
@@ -39,11 +40,13 @@ void ImageDataLayer<Dtype>::DataLayerSetUp(const vector<Blob<Dtype>*>& bottom,
   std::ifstream infile(source.c_str());
   string line;
   size_t pos;
-  int label;
+  //int label;
   while (std::getline(infile, line)) {
-    pos = line.find_last_of(' ');
-    label = atoi(line.substr(pos + 1).c_str());
-    lines_.push_back(std::make_pair(line.substr(0, pos), label));
+    pos = line.find_first_of(' ');
+    lines_.push_back(std::make_pair(line.substr(0, pos), line.substr(pos+1)));
+    //pos = line.find_last_of(' ');
+    //label = atoi(line.substr(pos + 1).c_str());
+    //lines_.push_back(std::make_pair(line.substr(0, pos), label));
   }
 
   CHECK(!lines_.empty()) << "File is empty";
@@ -92,6 +95,8 @@ void ImageDataLayer<Dtype>::DataLayerSetUp(const vector<Blob<Dtype>*>& bottom,
       << top[0]->width();
   // label
   vector<int> label_shape(1, batch_size);
+  int label_size = dense_dims;
+  label_shape.push_back(label_size);
   top[1]->Reshape(label_shape);
   for (int i = 0; i < this->prefetch_.size(); ++i) {
     this->prefetch_[i]->label_.Reshape(label_shape);
@@ -121,6 +126,8 @@ void ImageDataLayer<Dtype>::load_batch(Batch<Dtype>* batch) {
   const int new_width = image_data_param.new_width();
   const bool is_color = image_data_param.is_color();
   string root_folder = image_data_param.root_folder();
+  const int dense_dims = image_data_param.dense_dims();
+  const float dense_scale =  image_data_param.dense_scale();
 
   // Reshape according to the first image of each batch
   // on single input batches allows for inputs of varying dimension.
@@ -145,6 +152,7 @@ void ImageDataLayer<Dtype>::load_batch(Batch<Dtype>* batch) {
     CHECK_GT(lines_size, lines_id_);
     cv::Mat cv_img = ReadImageToCVMat(root_folder + lines_[lines_id_].first,
         new_height, new_width, is_color);
+    //LOG(INFO) << lines_[lines_id_].first;
     CHECK(cv_img.data) << "Could not load " << lines_[lines_id_].first;
     read_time += timer.MicroSeconds();
     timer.Start();
@@ -152,9 +160,15 @@ void ImageDataLayer<Dtype>::load_batch(Batch<Dtype>* batch) {
     int offset = batch->data_.offset(item_id);
     this->transformed_data_.set_cpu_data(prefetch_data + offset);
     this->data_transformer_->Transform(cv_img, &(this->transformed_data_));
-    trans_time += timer.MicroSeconds();
+    
+   
+    int offset_label = batch->label_.offset(item_id);
+    this->transformed_data_.set_cpu_data(prefetch_label + offset_label);
+    this->data_transformer_->Transform(lines_[lines_id_].second,&(this->transformed_data_),dense_dims,dense_scale);
 
-    prefetch_label[item_id] = lines_[lines_id_].second;
+    trans_time += timer.MicroSeconds();
+    
+        //prefetch_label[item_id] = lines_[lines_id_].second;
     // go to the next iter
     lines_id_++;
     if (lines_id_ >= lines_size) {
@@ -177,3 +191,18 @@ REGISTER_LAYER_CLASS(ImageData);
 
 }  // namespace caffe
 #endif  // USE_OPENCV
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

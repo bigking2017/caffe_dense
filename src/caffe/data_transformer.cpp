@@ -142,6 +142,35 @@ void DataTransformer<Dtype>::Transform(const Datum& datum,
     }
 }
 
+template<typename Dtype>
+void DataTransformer<Dtype>::Transform(const string& feature_str,
+                                       Blob<Dtype>* transformed_blob,
+                                       int dense_dims,float dense_scale) {
+
+  Dtype* transformed_data = transformed_blob->mutable_cpu_data();
+  string mid_string = feature_str;
+  char *p;
+      int ft_count = 0;
+      p = strtok((char *)mid_string.c_str()," ");
+      while(p&&ft_count<dense_dims){
+        if(ft_count == 0)
+        {
+          transformed_data[ft_count] = atof(p)*dense_scale;
+          //datum->add_float_data(atof(p));
+          ft_count ++;
+        }else
+        {
+          p = strtok(NULL," ");
+           transformed_data[ft_count] = atof(p)*dense_scale;
+           //datum->add_float_data(atof(p));
+          ft_count ++;
+        }
+      }
+       CHECK_EQ(ft_count, dense_dims) <<
+      "dense dims must has" << dense_dims <<  "dims";
+}
+
+
 
 template<typename Dtype>
 void DataTransformer<Dtype>::Transform(const Datum& datum,
